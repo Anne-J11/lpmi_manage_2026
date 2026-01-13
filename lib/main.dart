@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lpmi_manage/controller/home_controller.dart';
 import 'package:lpmi_manage/controller/login_controller.dart';
 import 'package:lpmi_manage/screen/welcome_screen.dart';
 import 'package:provider/provider.dart';
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => LoginController()),
-        //ChangeNotifierProvider(create: (_) => RegistrationController())
+        ChangeNotifierProvider(create: (_) => HomeController()),
       ],
       child: MaterialApp(
       home: WelcomeScreen(),),

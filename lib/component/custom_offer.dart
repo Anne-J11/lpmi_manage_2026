@@ -37,7 +37,7 @@ class CustomOffer extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                  child: Text(offer.lieu),
+                  child: Text(offer.location),
                 ),
               ],
             ),

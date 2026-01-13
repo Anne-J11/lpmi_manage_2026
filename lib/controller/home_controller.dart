@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
-import 'package:lpmi_manage/model/fake_data.dart';
 import 'package:lpmi_manage/model/offer.dart';
+import 'package:lpmi_manage/repository/offer_repository.dart';
 
-class HomeController extends ChangeNotifier{
-  final listSize = myOffers.length;
+class HomeController extends ChangeNotifier {
 
-  Future<List<Offer>> getOffers() async {
-    await Future.delayed(const Duration(seconds: 2));
+  List<Offer> offers = [];
+
+  Future<void> getOffers() async{
+    offers = await OfferRepository().getAllOffers();
     notifyListeners();
-    return myOffers;
   }
 }
