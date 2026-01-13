@@ -3,6 +3,7 @@ import 'package:lpmi_manage/model/offer.dart';
 
 class CustomOffer extends StatelessWidget {
   final Offer offer;
+
   const CustomOffer({super.key, required this.offer});
 
   @override
@@ -31,14 +32,8 @@ class CustomOffer extends StatelessWidget {
                     "${offer.startDate.day}/${offer.startDate.month}/${offer.startDate.year}",
                   ),
                 ),
-                Expanded(
-                  child: Text(
-                    offer.time.toString(),
-                  ),
-                ),
-                Expanded(
-                  child: Text(offer.location),
-                ),
+                Expanded(child: Text(offer.time.toString())),
+                Expanded(child: Text(offer.location)),
               ],
             ),
           ),

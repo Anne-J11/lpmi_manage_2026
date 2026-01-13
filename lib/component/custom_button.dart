@@ -6,19 +6,24 @@ class CustomButton extends StatelessWidget {
   final VoidCallback elevatedButtonClicked;
   final VoidCallback textButtonClicked;
 
-  const CustomButton({super.key,
-  required this.elevatedButtonText,
-  required this.textButtonText,
-  required this.elevatedButtonClicked,
-  required this.textButtonClicked,});
+  const CustomButton({
+    super.key,
+    required this.elevatedButtonText,
+    required this.textButtonText,
+    required this.elevatedButtonClicked,
+    required this.textButtonClicked,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ElevatedButton(onPressed: elevatedButtonClicked, child: Text(elevatedButtonText),),
+        ElevatedButton(
+          onPressed: elevatedButtonClicked,
+          child: Text(elevatedButtonText),
+        ),
         SizedBox(height: 20),
-        TextButton(onPressed: textButtonClicked, child: Text(textButtonText),)
+        TextButton(onPressed: textButtonClicked, child: Text(textButtonText)),
       ],
     );
   }

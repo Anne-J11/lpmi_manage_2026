@@ -18,8 +18,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => LoginController()),
         ChangeNotifierProvider(create: (_) => HomeController()),
       ],
-      child: MaterialApp(
-      home: WelcomeScreen(),),
+      child: MaterialApp(home: WelcomeScreen()),
     );
   }
 }

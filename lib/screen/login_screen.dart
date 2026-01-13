@@ -62,22 +62,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 loginController.checkLogin().then((isLoggedIn) {
                   if (isLoggedIn) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Connexion réussie"),
-                      ),
+                      const SnackBar(content: Text("Connexion réussie")),
                     );
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Erreur de connexion"),
-                      ),
+                      const SnackBar(content: Text("Erreur de connexion")),
                     );
                   }
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => const HomeScreen(),
-                    ),
+                    MaterialPageRoute(builder: (context) => const HomeScreen()),
                   );
                 });
               },

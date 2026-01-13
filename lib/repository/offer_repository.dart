@@ -22,9 +22,23 @@ class OfferRepository {
       orderBy: 'startDate DESC',
     );
 
-
     return List.generate(maps.length, (i) {
       return Offer.fromMap(maps[i]);
     });
+  }
+
+  Future<void> deleteOfferById(int id) async {
+    final db = await _dbHelper.database;
+    await db.delete(tableName, where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<void> updateOfferById(Offer offer) async {
+    final db = await _dbHelper.database;
+    await db.update(
+      tableName,
+      offer.toMap(),
+      where: 'id = ?',
+      whereArgs: [offer.id],
+    );
   }
 }
