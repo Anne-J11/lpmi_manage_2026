@@ -29,7 +29,7 @@ class DatabaseHelper {
         id $idType,
         title $textType,
         description $textType,
-        time $textType,
+        time INTEGER NOT NULL,
         startDate $textType,
         location $textType
       )
