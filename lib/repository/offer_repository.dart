@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:lpmi_manage/database/database_helper.dart';
 import 'package:lpmi_manage/model/offer.dart';
 import 'package:sqflite/sqflite.dart';
@@ -16,15 +17,14 @@ class OfferRepository {
   }
 
   Future<List<Offer>> getAllOffers() async {
-    final db = await _dbHelper.database;
-    final List<Map<String, dynamic>> maps = await db.query(
-      tableName,
-      orderBy: 'startDate DESC',
-    );
-
-    return List.generate(maps.length, (i) {
-      return Offer.fromMap(maps[i]);
-    });
+    try {
+      final db = await _dbHelper.database;
+      final maps = await db.query(tableName, orderBy: 'startDate DESC');
+      return List.generate(maps.length, (i) => Offer.fromMap(maps[i]));
+    } catch (e) {
+      debugPrint('Erreur getAllOffers: $e');
+      return []; // Ou rethrow selon la stratégie
+    }
   }
 
   Future<void> deleteOfferById(int id) async {

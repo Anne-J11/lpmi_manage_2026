@@ -30,7 +30,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                 );
               },
-              child: Text("Sinscrire"),
+              child: Text("S\'inscrire"),
             ),
 
             const SizedBox(height: 50),

@@ -51,19 +51,23 @@ class _OfferScreenState extends State<OfferScreen> {
   }
 
   Future<void> _saveOrUpdateOffer() async {
-    if (_titleController.text.trim().isEmpty ||
-        _descriptionController.text.trim().isEmpty ||
-        _timeController.text.trim().isEmpty ||
-        _locationController.text.trim().isEmpty) {
+    final homeController = Provider.of<HomeController>(context, listen: false);
+
+    final validationError = homeController.validateOffer(
+      _titleController.text,
+      _descriptionController.text,
+      _timeController.text,
+      _locationController.text,
+    );
+
+    if (validationError != null) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Veuillez remplir tous les champs')),
+          SnackBar(content: Text(validationError)),
         );
       }
       return;
     }
-
-    final homeController = Provider.of<HomeController>(context, listen: false);
 
     if (widget.offer == null) {
       final newOffer = Offer(
@@ -124,7 +128,7 @@ class _OfferScreenState extends State<OfferScreen> {
                 final pickedDate = await showDatePicker(
                   context: context,
                   initialDate: _startDate,
-                  firstDate: DateTime.now(), // Prevents selection of past dates
+                  firstDate: DateTime.now(),
                   lastDate: DateTime(2101),
                 );
                 if (pickedDate != null && pickedDate != _startDate) {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lpmi_manage/controller/home_controller.dart';
 import 'package:lpmi_manage/model/offer.dart';
-import 'package:lpmi_manage/screen/offer_screen.dart';
 import 'package:lpmi_manage/screen/offer_detail_screen.dart';
+import 'package:lpmi_manage/screen/offer_screen.dart';
 import 'package:provider/provider.dart';
 
 class CustomOffer extends StatelessWidget {
@@ -43,7 +43,7 @@ class CustomOffer extends StatelessWidget {
                       context,
                       Icons.calendar_today,
                       "${offer.startDate.day}/${offer.startDate.month}/${offer.startDate.year}"),
-                  _buildInfo(context, Icons.timer, "${offer.time} jours"),
+                  _buildInfo(context, Icons.timer, "${offer.time} mois"),
                   _buildInfo(context, Icons.location_on, offer.location),
                 ],
               ),

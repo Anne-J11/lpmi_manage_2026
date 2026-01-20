@@ -4,6 +4,7 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:lpmi_manage/model/user.dart';
 import 'package:lpmi_manage/repository/user_repository.dart';
+import 'package:lpmi_manage/utils/validators.dart';
 
 class RegistrationController extends ChangeNotifier {
   final _userRepository = UserRepository();
@@ -16,7 +17,6 @@ class RegistrationController extends ChangeNotifier {
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
-  // Generates a random salt
   String _generateSalt([int length = 32]) {
     final random = Random.secure();
     final values = List<int>.generate(length, (i) => random.nextInt(256));
@@ -35,19 +35,15 @@ class RegistrationController extends ChangeNotifier {
       return false;
     }
 
-    if (!RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$").hasMatch(emailController.text.trim())) {
+    if (!Validators.isValidEmail(emailController.text.trim())) {
       _errorMessage = "Veuillez entrer une adresse email valide.";
       notifyListeners();
       return false;
     }
 
-    final password = passwordController.text;
-    if (password.length < 8 ||
-        !password.contains(RegExp(r'[A-Z]')) || // Uppercase
-        !password.contains(RegExp(r'[a-z]')) || // Lowercase
-        !password.contains(RegExp(r'[0-9]')) || // Digit
-        !password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) { // Special char
-      _errorMessage = "Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.";
+    final passwordError = Validators.validatePassword(passwordController.text);
+    if (passwordError != null) {
+      _errorMessage = passwordError;
       notifyListeners();
       return false;
     }
@@ -60,7 +56,7 @@ class RegistrationController extends ChangeNotifier {
     }
 
     final salt = _generateSalt();
-    final hashedPassword = sha256.convert(utf8.encode(password + salt)).toString();
+    final hashedPassword = sha256.convert(utf8.encode(passwordController.text + salt)).toString();
 
     final newUser = User(
       nom: nomController.text.trim(),

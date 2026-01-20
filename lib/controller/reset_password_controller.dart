@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:lpmi_manage/repository/user_repository.dart';
+import 'package:lpmi_manage/utils/validators.dart';
 
 class ResetPasswordController extends ChangeNotifier {
   final _userRepository = UserRepository();
@@ -41,10 +42,9 @@ class ResetPasswordController extends ChangeNotifier {
     _emailForReset = email;
     _codeSent = true;
 
-    // Simulation of sending an email by printing the code to the console.
-    debugPrint('---- PASSWORD RESET CODE FOR $email: $_generatedCode ----');
+    debugPrint('---- CODE DE RÉINITIALISATION POUR $email: $_generatedCode ----');
 
-    _message = "Un code a été envoyé à l'adresse $email.";
+    _message = "Un code a été envoyé à l'adresse $email (vérifiez la console de débogage).";
     notifyListeners();
   }
 
@@ -59,21 +59,27 @@ class ResetPasswordController extends ChangeNotifier {
       return false;
     }
 
-    if (code != _generatedCode || emailController.text.trim() != _emailForReset) {
+    if (code != _generatedCode) {
       _message = "Le code de réinitialisation est incorrect.";
       notifyListeners();
       return false;
     }
 
-    if (newPassword.length < 8) {
-      _message = "Le nouveau mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.";
+    final passwordError = Validators.validatePassword(newPassword);
+    if (passwordError != null) {
+      _message = passwordError;
       notifyListeners();
       return false;
     }
 
     try {
-      final hashedPassword = sha256.convert(utf8.encode(newPassword)).toString();
+      final user = await _userRepository.getUserByEmail(_emailForReset);
+      if (user == null) throw Exception("User not found during password update");
+
+      final hashedPassword = sha256.convert(utf8.encode(newPassword + user.salt)).toString();
+      
       await _userRepository.updatePassword(_emailForReset, hashedPassword);
+
       _message = "Mot de passe réinitialisé avec succès.";
       notifyListeners();
       return true;

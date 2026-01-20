@@ -3,6 +3,7 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:lpmi_manage/model/user.dart';
 import 'package:lpmi_manage/repository/user_repository.dart';
+import 'package:lpmi_manage/utils/validators.dart';
 
 class LoginController extends ChangeNotifier {
   final _userRepository = UserRepository();
@@ -22,7 +23,7 @@ class LoginController extends ChangeNotifier {
       return false;
     }
 
-    if (!RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$").hasMatch(emailController.text.trim())) {
+    if (!Validators.isValidEmail(emailController.text.trim())) {
       _errorMessage = "Veuillez entrer une adresse email valide.";
       notifyListeners();
       return false;

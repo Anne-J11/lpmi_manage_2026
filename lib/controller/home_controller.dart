@@ -18,12 +18,23 @@ class HomeController extends ChangeNotifier {
 
   Future<void> deleteOfferById(int id) async {
     await _repository.deleteOfferById(id);
-    await getOffers();
+    offers.removeWhere((offer) => offer.id == id);
+    notifyListeners();
   }
 
   Future<void> updateOfferById(Offer offer) async {
     await _repository.updateOfferById(offer);
     await getOffers();
+  }
+
+  String? validateOffer(String title, String description, String time, String location) {
+    if (title.trim().isEmpty) return "Le titre est obligatoire";
+    if (description.trim().isEmpty) return "La description est obligatoire";
+    if (int.tryParse(time) == null || int.parse(time) <= 0) {
+      return "La durée doit être un nombre positif";
+    }
+    if (location.trim().isEmpty) return "Le lieu est obligatoire";
+    return null;
   }
 
   void logout() {
