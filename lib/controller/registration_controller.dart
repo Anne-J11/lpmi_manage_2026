@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:lpmi_manage/model/user.dart';
 import 'package:lpmi_manage/repository/user_repository.dart';
@@ -44,11 +46,13 @@ class RegistrationController extends ChangeNotifier {
       return false;
     }
 
+    final HashedPassword = sha256.convert(utf8.encode(passwordController.text)).toString();
+
     final newUser = User(
       nom: nomController.text.trim(),
       prenom: prenomController.text.trim(),
       email: emailController.text.trim(),
-      password: passwordController.text, // In a real app, hash this password!
+      password: HashedPassword, 
     );
 
     try {

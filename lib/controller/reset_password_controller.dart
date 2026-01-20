@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:math';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:lpmi_manage/repository/user_repository.dart';
 
@@ -70,7 +72,8 @@ class ResetPasswordController extends ChangeNotifier {
     }
 
     try {
-      await _userRepository.updatePassword(_emailForReset, newPassword);
+      final hashedPassword = sha256.convert(utf8.encode(newPassword)).toString();
+      await _userRepository.updatePassword(_emailForReset, hashedPassword);
       _message = "Mot de passe réinitialisé avec succès.";
       notifyListeners();
       return true;

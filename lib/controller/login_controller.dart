@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:lpmi_manage/repository/user_repository.dart';
 
@@ -33,9 +35,9 @@ class LoginController extends ChangeNotifier {
       return false;
     }
 
-    // In a real app, you would compare hashed passwords.
-    // This is just for demonstration.
-    if (user.password != passwordController.text) {
+    final hashedPassword = sha256.convert(utf8.encode(passwordController.text)).toString();
+
+    if (user.password != hashedPassword) {
       _errorMessage = "Le mot de passe est incorrect.";
       notifyListeners();
       return false;
