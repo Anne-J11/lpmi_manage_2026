@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:lpmi_manage/model/user.dart';
@@ -14,6 +15,13 @@ class RegistrationController extends ChangeNotifier {
 
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
+
+  // Generates a random salt
+  String _generateSalt([int length = 32]) {
+    final random = Random.secure();
+    final values = List<int>.generate(length, (i) => random.nextInt(256));
+    return base64Url.encode(values);
+  }
 
   Future<bool> registerUser() async {
     _errorMessage = null;
@@ -33,8 +41,13 @@ class RegistrationController extends ChangeNotifier {
       return false;
     }
 
-    if (passwordController.text.length < 8) {
-      _errorMessage = "Le mot de passe doit contenir au moins 8 caractères.";
+    final password = passwordController.text;
+    if (password.length < 8 ||
+        !password.contains(RegExp(r'[A-Z]')) || // Uppercase
+        !password.contains(RegExp(r'[a-z]')) || // Lowercase
+        !password.contains(RegExp(r'[0-9]')) || // Digit
+        !password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) { // Special char
+      _errorMessage = "Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.";
       notifyListeners();
       return false;
     }
@@ -46,13 +59,15 @@ class RegistrationController extends ChangeNotifier {
       return false;
     }
 
-    final HashedPassword = sha256.convert(utf8.encode(passwordController.text)).toString();
+    final salt = _generateSalt();
+    final hashedPassword = sha256.convert(utf8.encode(password + salt)).toString();
 
     final newUser = User(
       nom: nomController.text.trim(),
       prenom: prenomController.text.trim(),
       email: emailController.text.trim(),
-      password: HashedPassword, 
+      password: hashedPassword,
+      salt: salt,
     );
 
     try {

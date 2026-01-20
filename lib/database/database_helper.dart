@@ -5,7 +5,7 @@ class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
   static Database? _database;
 
-  static const int _version = 2; // Database version upgraded from 1 to 2
+  static const int _version = 3; // Database version upgraded from 2 to 3
 
   DatabaseHelper._init();
 
@@ -23,11 +23,10 @@ class DatabaseHelper {
       path,
       version: _version,
       onCreate: _createDB,
-      onUpgrade: _onUpgrade, // Added the upgrade callback
+      onUpgrade: _onUpgrade,
     );
   }
 
-  // This method is called for new installations
   Future<void> _createDB(Database db, int version) async {
     // Create offers table
     await db.execute('''
@@ -45,14 +44,15 @@ class DatabaseHelper {
     await _createUsersTable(db);
   }
 
-  // This method is called when the database version increases
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2) {
       await _createUsersTable(db);
     }
+    if (oldVersion < 3) {
+      await db.execute('ALTER TABLE users ADD COLUMN salt TEXT NOT NULL DEFAULT \'\'');
+    }
   }
 
-  // Extracted user table creation to avoid code duplication
   Future<void> _createUsersTable(Database db) async {
     await db.execute('''
       CREATE TABLE users (

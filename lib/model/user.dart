@@ -3,7 +3,8 @@ class User {
   final String nom;
   final String prenom;
   final String email;
-  final String password; // In a real app, this should be a hash
+  final String password; // This is now the hashed password
+  final String salt;     // The salt used for hashing
 
   User({
     this.id,
@@ -11,6 +12,7 @@ class User {
     required this.prenom,
     required this.email,
     required this.password,
+    required this.salt,
   });
 
   Map<String, dynamic> toMap() {
@@ -20,6 +22,7 @@ class User {
       'prenom': prenom,
       'email': email,
       'password': password,
+      'salt': salt,
     };
   }
 
@@ -30,6 +33,7 @@ class User {
       prenom: map['prenom'] as String,
       email: map['email'] as String,
       password: map['password'] as String,
+      salt: map['salt'] as String,
     );
   }
 }

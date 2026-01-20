@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:lpmi_manage/model/user.dart';
 import 'package:lpmi_manage/repository/user_repository.dart';
 
 class LoginController extends ChangeNotifier {
@@ -30,15 +31,15 @@ class LoginController extends ChangeNotifier {
     final user = await _userRepository.getUserByEmail(emailController.text.trim());
 
     if (user == null) {
-      _errorMessage = "Aucun utilisateur trouvé avec cet email.";
+      _errorMessage = "Email ou mot de passe incorrect.";
       notifyListeners();
       return false;
     }
 
-    final hashedPassword = sha256.convert(utf8.encode(passwordController.text)).toString();
+    final hashedPassword = sha256.convert(utf8.encode(passwordController.text + user.salt)).toString();
 
     if (user.password != hashedPassword) {
-      _errorMessage = "Le mot de passe est incorrect.";
+      _errorMessage = "Email ou mot de passe incorrect.";
       notifyListeners();
       return false;
     }
