@@ -1,12 +1,46 @@
 import 'package:flutter/cupertino.dart';
+import 'package:lpmi_manage/repository/user_repository.dart';
 
 class LoginController extends ChangeNotifier {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  final _userRepository = UserRepository();
+
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  String? _errorMessage;
+  String? get errorMessage => _errorMessage;
 
   Future<bool> checkLogin() async {
-    await Future.delayed(const Duration(seconds: 2));
-    return emailController.text.isNotEmpty &&
-        passwordController.text.isNotEmpty;
+    _errorMessage = null;
+
+    if (emailController.text.trim().isEmpty || passwordController.text.isEmpty) {
+      _errorMessage = "L'email et le mot de passe sont obligatoires.";
+      notifyListeners();
+      return false;
+    }
+
+    if (!RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$").hasMatch(emailController.text.trim())) {
+      _errorMessage = "Veuillez entrer une adresse email valide.";
+      notifyListeners();
+      return false;
+    }
+
+    final user = await _userRepository.getUserByEmail(emailController.text.trim());
+
+    if (user == null) {
+      _errorMessage = "Aucun utilisateur trouvé avec cet email.";
+      notifyListeners();
+      return false;
+    }
+
+    // In a real app, you would compare hashed passwords.
+    // This is just for demonstration.
+    if (user.password != passwordController.text) {
+      _errorMessage = "Le mot de passe est incorrect.";
+      notifyListeners();
+      return false;
+    }
+
+    return true;
   }
 }

@@ -11,6 +11,11 @@ class HomeController extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> addOffer(Offer offer) async {
+    await _repository.insertOffer(offer);
+    await getOffers(); // Refresh the list after adding
+  }
+
   Future<void> deleteOfferById(int id) async {
     await _repository.deleteOfferById(id);
     await getOffers();
@@ -19,5 +24,11 @@ class HomeController extends ChangeNotifier {
   Future<void> updateOfferById(Offer offer) async {
     await _repository.updateOfferById(offer);
     await getOffers();
+  }
+
+  void logout() {
+    offers = [];
+    notifyListeners();
+    // In a real app, you would also clear user session data here.
   }
 }

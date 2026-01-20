@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lpmi_manage/component/custom_button.dart';
+import 'package:lpmi_manage/controller/registration_controller.dart';
 import 'package:lpmi_manage/screen/login_screen.dart';
+import 'package:provider/provider.dart';
 
 enum Gender { masculin, feminin }
 
@@ -16,6 +18,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final registrationController = Provider.of<RegistrationController>(context);
+
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
@@ -24,14 +28,24 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text("Inscription"),
+                const Text("Inscription", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 20),
+
+                if (registrationController.errorMessage != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10.0),
+                    child: Text(
+                      registrationController.errorMessage!,
+                      style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+
                 SizedBox(
                   width: 300,
                   child: TextField(
-                    decoration: InputDecoration(
-                      labelText: "Nom",
-                      border: OutlineInputBorder(),
-                    ),
+                    controller: registrationController.nomController,
+                    decoration: const InputDecoration(labelText: "Nom", border: OutlineInputBorder()),
                   ),
                 ),
 
@@ -40,10 +54,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 SizedBox(
                   width: 300,
                   child: TextField(
-                    decoration: InputDecoration(
-                      labelText: "Prénom",
-                      border: OutlineInputBorder(),
-                    ),
+                    controller: registrationController.prenomController,
+                    decoration: const InputDecoration(labelText: "Prénom", border: OutlineInputBorder()),
                   ),
                 ),
 
@@ -52,10 +64,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 SizedBox(
                   width: 300,
                   child: TextField(
-                    decoration: InputDecoration(
-                      labelText: "E-mail",
-                      border: OutlineInputBorder(),
-                    ),
+                    controller: registrationController.emailController,
+                    decoration: const InputDecoration(labelText: "E-mail", border: OutlineInputBorder()),
                   ),
                 ),
 
@@ -64,10 +74,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 SizedBox(
                   width: 300,
                   child: TextField(
-                    decoration: InputDecoration(
-                      labelText: "Mot de passe",
-                      border: OutlineInputBorder(),
-                    ),
+                    controller: registrationController.passwordController,
+                    obscureText: true,
+                    decoration: const InputDecoration(labelText: "Mot de passe", border: OutlineInputBorder()),
                   ),
                 ),
 
@@ -82,26 +91,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           leading: Radio<Gender>(
                             value: Gender.masculin,
                             groupValue: _selectedGender,
-                            onChanged: (value) {
-                              setState(() {
-                                _selectedGender = value;
-                              });
-                            },
+                            onChanged: (value) => setState(() => _selectedGender = value),
                           ),
                         ),
                       ),
-
                       Expanded(
                         child: ListTile(
-                          title: const Text("Feminin"),
+                          title: const Text("Féminin"),
                           leading: Radio<Gender>(
                             value: Gender.feminin,
                             groupValue: _selectedGender,
-                            onChanged: (value) {
-                              setState(() {
-                                _selectedGender = value;
-                              });
-                            },
+                            onChanged: (value) => setState(() => _selectedGender = value),
                           ),
                         ),
                       ),
@@ -112,13 +112,22 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 CustomButton(
                   elevatedButtonText: "S'inscrire",
                   textButtonText: "Déjà un compte ? Se connecter",
-                  elevatedButtonClicked: () {},
+                  elevatedButtonClicked: () async {
+                    final isRegistered = await registrationController.registerUser();
+                    if (isRegistered) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Inscription réussie !")),
+                      );
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => const LoginScreen()),
+                            (Route<dynamic> route) => false,
+                      );
+                    }
+                  },
                   textButtonClicked: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => const LoginScreen(),
-                      ),
+                      MaterialPageRoute(builder: (context) => const LoginScreen()),
                     );
                   },
                 ),

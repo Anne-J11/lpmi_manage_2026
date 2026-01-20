@@ -1,9 +1,11 @@
-import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
   static Database? _database;
+
+  static const int _version = 2; // Database version upgraded from 1 to 2
 
   DatabaseHelper._init();
 
@@ -17,21 +19,48 @@ class DatabaseHelper {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
 
-    return await openDatabase(path, version: 1, onCreate: _createDB);
+    return await openDatabase(
+      path,
+      version: _version,
+      onCreate: _createDB,
+      onUpgrade: _onUpgrade, // Added the upgrade callback
+    );
   }
 
+  // This method is called for new installations
   Future<void> _createDB(Database db, int version) async {
-    const idType = 'INTEGER PRIMARY KEY';
-    const textType = 'TEXT NOT NULL';
-
+    // Create offers table
     await db.execute('''
       CREATE TABLE offers (
-        id $idType,
-        title $textType,
-        description $textType,
+        id INTEGER PRIMARY KEY,
+        title TEXT NOT NULL,
+        description TEXT NOT NULL,
         time INTEGER NOT NULL,
-        startDate $textType,
-        location $textType
+        startDate TEXT NOT NULL,
+        location TEXT NOT NULL
+      )
+    ''');
+
+    // Create users table for fresh installs
+    await _createUsersTable(db);
+  }
+
+  // This method is called when the database version increases
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await _createUsersTable(db);
+    }
+  }
+
+  // Extracted user table creation to avoid code duplication
+  Future<void> _createUsersTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nom TEXT NOT NULL,
+        prenom TEXT NOT NULL,
+        email TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL
       )
     ''');
   }

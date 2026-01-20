@@ -4,16 +4,16 @@ import 'package:lpmi_manage/controller/home_controller.dart';
 import 'package:lpmi_manage/model/offer.dart';
 import 'package:provider/provider.dart';
 
-class AddOfferScreen extends StatefulWidget {
+class OfferScreen extends StatefulWidget {
   final Offer? offer;
 
-  const AddOfferScreen({super.key, this.offer});
+  const OfferScreen({super.key, this.offer});
 
   @override
-  State<AddOfferScreen> createState() => _AddOfferScreenState();
+  State<OfferScreen> createState() => _OfferScreenState();
 }
 
-class _AddOfferScreenState extends State<AddOfferScreen> {
+class _OfferScreenState extends State<OfferScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _timeController = TextEditingController();
@@ -74,7 +74,7 @@ class _AddOfferScreenState extends State<AddOfferScreen> {
         startDate: _startDate,
         location: _locationController.text.trim(),
       );
-      await homeController.getOffers(); // Simulating insert
+      await homeController.addOffer(newOffer);
     } else {
       final updatedOffer = Offer(
         id: widget.offer!.id,
@@ -124,7 +124,7 @@ class _AddOfferScreenState extends State<AddOfferScreen> {
                 final pickedDate = await showDatePicker(
                   context: context,
                   initialDate: _startDate,
-                  firstDate: DateTime(2000),
+                  firstDate: DateTime.now(), // Prevents selection of past dates
                   lastDate: DateTime(2101),
                 );
                 if (pickedDate != null && pickedDate != _startDate) {
