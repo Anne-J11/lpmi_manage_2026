@@ -29,7 +29,7 @@ class OfferDetailScreen extends StatelessWidget {
             const Divider(height: 32),
             _buildInfoRow(context, Icons.calendar_today, 'Début : ${offer.startDate.day}/${offer.startDate.month}/${offer.startDate.year}'),
             const SizedBox(height: 8),
-            _buildInfoRow(context, Icons.timer, 'Durée : ${offer.time} jours'),
+            _buildInfoRow(context, Icons.timer, 'Durée : ${offer.time} mois'),
             const SizedBox(height: 8),
             _buildInfoRow(context, Icons.location_on, 'Lieu : ${offer.location}'),
           ],

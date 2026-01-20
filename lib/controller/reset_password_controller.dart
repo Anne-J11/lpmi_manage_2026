@@ -66,7 +66,7 @@ class ResetPasswordController extends ChangeNotifier {
     }
 
     if (newPassword.length < 8) {
-      _message = "Le nouveau mot de passe doit contenir au moins 8 caractères.";
+      _message = "Le nouveau mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.";
       notifyListeners();
       return false;
     }

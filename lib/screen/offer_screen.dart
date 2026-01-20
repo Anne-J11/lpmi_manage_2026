@@ -139,7 +139,7 @@ class _OfferScreenState extends State<OfferScreen> {
             TextField(
               controller: _timeController,
               decoration: const InputDecoration(
-                  labelText: "Durée de l'offre (en jours)",
+                  labelText: "Durée de l'offre (en mois)",
                   border: OutlineInputBorder()),
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
